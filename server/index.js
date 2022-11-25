@@ -1,6 +1,8 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { registerValidation } from "./vadlidations/auth.js";
+import { validationResult } from "express-validator";
 
 const app = express();
 
@@ -17,7 +19,14 @@ mongoose
     console.log(err);
   });
 
-app.post("/auth/register", (req, res) => {});
+app.post("/auth/register", registerValidation, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(errors.array());
+  }
+
+  res.json({ success: true });
+});
 
 app.listen("4444", (err) => {
   if (err) return console.log(err);
